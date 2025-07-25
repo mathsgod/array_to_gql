@@ -1,5 +1,7 @@
 {
     "name": "mathsgod/array_to_gql",
+    "description": "A PHP library for converting PHP arrays to GraphQL query syntax with support for parameters, aliases, and nested structures",
+    "keywords": ["graphql", "query", "builder", "php", "array", "converter", "gql", "query-builder", "graphql-query", "parameters", "aliases"],
     "license": "MIT",
     "authors": [
         {
