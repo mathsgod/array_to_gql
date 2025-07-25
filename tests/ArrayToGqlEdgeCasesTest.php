@@ -193,4 +193,50 @@ class ArrayToGqlEdgeCasesTest extends TestCase
         
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * 測試索引數組參數（列表）
+     */
+    public function testIndexedArrayArguments(): void
+    {
+        $input = [
+            'addUser' => [
+                '__args' => [
+                    'tags' => ['php', 'graphql', 'array'],
+                    'numbers' => [1, 2, 3]
+                ]
+            ]
+        ];
+        
+        $expected = 'addUser(tags: ["php", "graphql", "array"], numbers: ["1", "2", "3"])';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試嵌套的索引數組和關聯數組
+     */
+    public function testNestedArrayArguments(): void
+    {
+        $input = [
+            'addUser' => [
+                '__args' => [
+                    'data' => [
+                        'name' => 'John',
+                        'tags' => ['admin', 'user'],
+                        'permissions' => [
+                            'read' => true,
+                            'roles' => ['editor', 'viewer']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        
+        $expected = 'addUser(data: {name: "John", tags: ["admin", "user"], permissions: {read: true, roles: ["editor", "viewer"]}})';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
 }

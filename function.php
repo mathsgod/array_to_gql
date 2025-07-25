@@ -98,22 +98,39 @@ if (!function_exists('array_to_gql')) {
      */
     function formatArgumentValue($value) {
         if (is_array($value)) {
-            // 如果參數值是數組，建構對象格式（支持多層嵌套）
+            // 如果參數值是數組
             if (empty($value)) {
                 return '{}';
             }
             
-            $objString = '{';
-            $first = true;
-            foreach ($value as $objKey => $objValue) {
-                if (!$first) {
-                    $objString .= ', ';
+            // 檢查是否為索引數組（列表）
+            if (array_keys($value) === range(0, count($value) - 1)) {
+                // 索引數組 - 生成列表格式 [item1, item2, ...]
+                $listString = '[';
+                $first = true;
+                foreach ($value as $item) {
+                    if (!$first) {
+                        $listString .= ', ';
+                    }
+                    $listString .= formatArgumentValue($item);
+                    $first = false;
                 }
-                $objString .= "{$objKey}: " . formatArgumentValue($objValue);
-                $first = false;
+                $listString .= ']';
+                return $listString;
+            } else {
+                // 關聯數組 - 生成對象格式 {key: value, ...}
+                $objString = '{';
+                $first = true;
+                foreach ($value as $objKey => $objValue) {
+                    if (!$first) {
+                        $objString .= ', ';
+                    }
+                    $objString .= "{$objKey}: " . formatArgumentValue($objValue);
+                    $first = false;
+                }
+                $objString .= '}';
+                return $objString;
             }
-            $objString .= '}';
-            return $objString;
         } elseif (is_bool($value)) {
             // 布爾值直接返回 true 或 false，不加引號
             return $value ? 'true' : 'false';
