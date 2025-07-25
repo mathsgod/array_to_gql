@@ -1,0 +1,18 @@
+{
+    "name": "mathsgod/array_to_gql",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Raymond Chong",
+            "email": "mathsgod@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "function.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    }
+}
