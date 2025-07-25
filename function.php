@@ -2,6 +2,25 @@
 
 if (!function_exists('array_to_gql')) {
 
+    /**
+     * Convert a PHP array to GraphQL query syntax
+     * 
+     * This function transforms a PHP array structure into a valid GraphQL query string.
+     * It supports nested structures, parameters, aliases, and various value types.
+     * 
+     * Special array keys:
+     * - '__args': Define query parameters/arguments
+     * - '__aliasFor': Create field aliases
+     * 
+     * Value processing rules:
+     * - true: Shows field name only
+     * - false: Field is ignored/excluded
+     * - strings/numbers: Shows field name only (value ignored)
+     * - arrays: Recursively processed as nested structures
+     * 
+     * @param array $array The PHP array to convert to GraphQL syntax
+     * @return string The generated GraphQL query string
+     */
     function array_to_gql($array): string
     {
         $gql = '';
@@ -62,6 +81,21 @@ if (!function_exists('array_to_gql')) {
         return trim($gql);
     }
 
+    /**
+     * Format a value for use as a GraphQL argument
+     * 
+     * This helper function properly formats different value types for use in GraphQL arguments.
+     * It handles arrays (converted to objects), booleans (as literal true/false), 
+     * and other values (as quoted strings).
+     * 
+     * @param mixed $value The value to format
+     * @return string The formatted value ready for GraphQL argument usage
+     * 
+     * @example
+     * formatArgumentValue(true)           // Returns: true
+     * formatArgumentValue("hello")        // Returns: "hello"
+     * formatArgumentValue(['key' => 'val']) // Returns: {key: "val"}
+     */
     function formatArgumentValue($value) {
         if (is_array($value)) {
             // 如果參數值是數組，建構對象格式（支持多層嵌套）
