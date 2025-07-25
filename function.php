@@ -32,8 +32,15 @@ if (!function_exists('array_to_gql')) {
                         unset($value['__aliasFor']);
                     }
                     
-                    // 生成帶參數的查詢
-                    $gql .= "{$aliasPrefix}{$actualKey}({$argString}) { " . array_to_gql($value) . " } ";
+                    // 檢查是否還有其他字段需要查詢
+                    $remainingFields = array_to_gql($value);
+                    if (trim($remainingFields) !== '') {
+                        // 生成帶參數和字段的查詢
+                        $gql .= "{$aliasPrefix}{$actualKey}({$argString}) { {$remainingFields} } ";
+                    } else {
+                        // 只有參數，沒有字段
+                        $gql .= "{$aliasPrefix}{$actualKey}({$argString}) ";
+                    }
                 } else {
                     // 移除特殊鍵以便處理其他字段
                     if ($aliasFor) {

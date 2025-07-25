@@ -172,4 +172,25 @@ class ArrayToGqlEdgeCasesTest extends TestCase
         
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * 測試只有參數沒有字段的情況
+     */
+    public function testArgumentsOnlyWithoutFields(): void
+    {
+        $input = [
+            'mutation' => [
+                'deleteUser' => [
+                    '__args' => [
+                        'id' => 123
+                    ]
+                ]
+            ]
+        ];
+        
+        $expected = 'mutation { deleteUser(id: "123") }';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
 }
