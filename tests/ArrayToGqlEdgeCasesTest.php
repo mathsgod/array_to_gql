@@ -141,4 +141,35 @@ class ArrayToGqlEdgeCasesTest extends TestCase
         
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * 測試參數中的布爾值
+     */
+    public function testBooleanValuesInArguments(): void
+    {
+        $input = [
+            'mutation' => [
+                'addUser' => [
+                    '__args' => [
+                        'data' => [
+                            'name' => 'John',
+                            'is_active' => true,
+                            'is_verified' => false,
+                            'metadata' => [
+                                'premium' => true,
+                                'trial' => false
+                            ]
+                        ]
+                    ],
+                    'id' => true,
+                    'name' => true
+                ]
+            ]
+        ];
+        
+        $expected = 'mutation { addUser(data: {name: "John", is_active: true, is_verified: false, metadata: {premium: true, trial: false}}) { id name } }';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
 }

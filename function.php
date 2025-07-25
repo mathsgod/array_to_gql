@@ -73,6 +73,9 @@ if (!function_exists('array_to_gql')) {
             }
             $objString .= '}';
             return $objString;
+        } elseif (is_bool($value)) {
+            // 布爾值直接返回 true 或 false，不加引號
+            return $value ? 'true' : 'false';
         } else {
             return "\"" . addslashes($value) . "\"";
         }
