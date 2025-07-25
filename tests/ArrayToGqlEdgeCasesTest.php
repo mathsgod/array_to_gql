@@ -38,7 +38,7 @@ class ArrayToGqlEdgeCasesTest extends TestCase
             ]
         ];
         
-        $expected = 'searchUsers: users(filter: {age: {min: "18", max: "65"}, location: {country: "US", city: "New York"}}, limit: "100") { id profile { name contacts { email phone } } }';
+        $expected = 'searchUsers: users(filter: {age: {min: 18, max: 65}, location: {country: "US", city: "New York"}}, limit: 100) { id profile { name contacts { email phone } } }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
@@ -116,7 +116,7 @@ class ArrayToGqlEdgeCasesTest extends TestCase
             ]
         ];
         
-        $expected = 'search(query: "hello \"world\"", limit: "10", offset: "0") { results { id title } }';
+        $expected = 'search(query: "hello \"world\"", limit: 10, offset: 0) { results { id title } }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
@@ -188,7 +188,7 @@ class ArrayToGqlEdgeCasesTest extends TestCase
             ]
         ];
         
-        $expected = 'mutation { deleteUser(id: "123") }';
+        $expected = 'mutation { deleteUser(id: 123) }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
@@ -208,7 +208,7 @@ class ArrayToGqlEdgeCasesTest extends TestCase
             ]
         ];
         
-        $expected = 'addUser(tags: ["php", "graphql", "array"], numbers: ["1", "2", "3"])';
+        $expected = 'addUser(tags: ["php", "graphql", "array"], numbers: [1, 2, 3])';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
@@ -235,6 +235,85 @@ class ArrayToGqlEdgeCasesTest extends TestCase
         ];
         
         $expected = 'addUser(data: {name: "John", tags: ["admin", "user"], permissions: {read: true, roles: ["editor", "viewer"]}})';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試數字類型參數
+     */
+    public function testNumericArguments(): void
+    {
+        $input = [
+            'mutation' => [
+                'updateProduct' => [
+                    '__args' => [
+                        'id' => 123,           // 真實整數
+                        'price' => 99.99,      // 真實浮點數
+                        'discount' => 0.15,    // 真實浮點數
+                        'sku' => '456'         // 數字字符串（保持字符串）
+                    ]
+                ]
+            ]
+        ];
+        
+        $expected = 'mutation { updateProduct(id: 123, price: 99.99, discount: 0.15, sku: "456") }';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試混合類型參數（數字、布爾、字符串、數組）
+     */
+    public function testMixedTypeArguments(): void
+    {
+        $input = [
+            'addProduct' => [
+                '__args' => [
+                    'id' => 789,
+                    'name' => 'Product Name',
+                    'active' => true,
+                    'price' => 29.95,
+                    'tags' => ['sale', 'new'],
+                    'metadata' => [
+                        'weight' => 1.5,
+                        'available' => false
+                    ]
+                ]
+            ]
+        ];
+        
+        $expected = 'addProduct(id: 789, name: "Product Name", active: true, price: 29.95, tags: ["sale", "new"], metadata: {weight: 1.5, available: false})';
+        $result = array_to_gql($input);
+        
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試各種數據類型的正確處理
+     */
+    public function testVariousDataTypes(): void
+    {
+        $input = [
+            'mutation' => [
+                'createUser' => [
+                    '__args' => [
+                        'realInt' => 123,           // 真實整數
+                        'realFloat' => 99.99,       // 真實浮點數
+                        'stringInt' => '456',       // 數字字符串（保持字符串）
+                        'stringFloat' => '78.9',    // 浮點數字符串（保持字符串）
+                        'name' => 'John',           // 常規字符串
+                        'active' => true,           // 布爾值
+                        'settings' => ['theme' => 'dark'], // 對象
+                        'tags' => ['admin', 'user'] // 數組
+                    ]
+                ]
+            ]
+        ];
+        
+        $expected = 'mutation { createUser(realInt: 123, realFloat: 99.99, stringInt: "456", stringFloat: "78.9", name: "John", active: true, settings: {theme: "dark"}, tags: ["admin", "user"]) }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);

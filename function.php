@@ -85,15 +85,26 @@ if (!function_exists('array_to_gql')) {
      * Format a value for use as a GraphQL argument
      * 
      * This helper function properly formats different value types for use in GraphQL arguments.
-     * It handles arrays (converted to objects), booleans (as literal true/false), 
-     * and other values (as quoted strings).
+     * It handles arrays (converted to lists or objects) and uses json_encode for scalar values
+     * to ensure proper type handling and escaping.
+     * 
+     * Type handling rules:
+     * - Arrays: Converted to GraphQL lists [] or objects {}
+     * - Scalar values: Handled by json_encode() for proper type preservation
+     *   - Boolean true/false: Literal true/false (no quotes)
+     *   - Integer/Float: Literal numbers (no quotes)
+     *   - Strings (including numeric strings): Quoted strings with proper escaping
      * 
      * @param mixed $value The value to format
      * @return string The formatted value ready for GraphQL argument usage
      * 
      * @example
      * formatArgumentValue(true)           // Returns: true
+     * formatArgumentValue(123)            // Returns: 123
+     * formatArgumentValue(99.99)          // Returns: 99.99
+     * formatArgumentValue("123")          // Returns: "123"
      * formatArgumentValue("hello")        // Returns: "hello"
+     * formatArgumentValue(['A', 'B'])     // Returns: ["A", "B"]
      * formatArgumentValue(['key' => 'val']) // Returns: {key: "val"}
      */
     function formatArgumentValue($value) {
@@ -131,11 +142,10 @@ if (!function_exists('array_to_gql')) {
                 $objString .= '}';
                 return $objString;
             }
-        } elseif (is_bool($value)) {
-            // 布爾值直接返回 true 或 false，不加引號
-            return $value ? 'true' : 'false';
         } else {
-            return "\"" . addslashes($value) . "\"";
+            // 對於非數組值，使用 json_encode 來處理類型和轉義
+            // JSON_UNESCAPED_UNICODE 確保 Unicode 字符正確顯示
+            return json_encode($value, JSON_UNESCAPED_UNICODE);
         }
     }
 }

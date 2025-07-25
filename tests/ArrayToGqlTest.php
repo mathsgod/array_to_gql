@@ -94,7 +94,7 @@ class ArrayToGqlTest extends TestCase
         $input = [
             'posts' => [
                 '__args' => [
-                    'limit' => '10',
+                    'limit' => 10,        // 真實數字而不是字符串
                     'status' => 'published'
                 ],
                 'id' => true,
@@ -102,7 +102,7 @@ class ArrayToGqlTest extends TestCase
             ]
         ];
         
-        $expected = 'posts(limit: "10", status: "published") { id title }';
+        $expected = 'posts(limit: 10, status: "published") { id title }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
@@ -184,7 +184,7 @@ class ArrayToGqlTest extends TestCase
         $input = [
             'posts' => [
                 '__args' => [
-                    'limit' => '10',
+                    'limit' => 10,        // 真實數字而不是字符串
                     'status' => 'published'
                 ],
                 'id' => true,
@@ -200,7 +200,7 @@ class ArrayToGqlTest extends TestCase
             ]
         ];
         
-        $expected = 'posts(limit: "10", status: "published") { id title author { name email profile { bio avatar } } }';
+        $expected = 'posts(limit: 10, status: "published") { id title author { name email profile { bio avatar } } }';
         $result = array_to_gql($input);
         
         $this->assertEquals($expected, $result);
