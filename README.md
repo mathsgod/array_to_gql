@@ -16,7 +16,7 @@ A PHP library for converting PHP arrays to GraphQL query syntax.
 ## Installation
 
 ```bash
-composer install
+composer require mathsgod/array_to_gql
 ```
 
 ## Usage
