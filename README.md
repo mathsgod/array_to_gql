@@ -1,5 +1,9 @@
 # Array to GraphQL
 
+[![Tests](https://github.com/mathsgod/array_to_gql/actions/workflows/tests.yml/badge.svg)](https://github.com/mathsgod/array_to_gql/actions/workflows/tests.yml)
+[![PHP Version](https://img.shields.io/badge/php-%5E7.0%20%7C%7C%20%5E8.0-8892BF.svg)](https://github.com/mathsgod/array_to_gql)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 A PHP library for converting PHP arrays to GraphQL query syntax.
 
 ## Features
