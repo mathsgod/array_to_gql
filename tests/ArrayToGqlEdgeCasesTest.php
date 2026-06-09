@@ -292,6 +292,67 @@ class ArrayToGqlEdgeCasesTest extends TestCase
     }
 
     /**
+     * 測試 null、空字符串與零值 — 確認現有行為：
+     * - 全部非 false 值（null / "" / 0 / 0.0）都會保留 key 名
+     * - 只有嚴格等於 false 嘅值先會被忽略
+     */
+    public function testNullEmptyAndZeroValues(): void
+    {
+        $input = [
+            'user' => [
+                'name' => null,
+                'nick' => '',
+                'count' => 0,
+                'price' => 0.0,
+                'id' => true
+            ]
+        ];
+
+        $expected = 'user { name nick count price id }';
+        $result = array_to_gql($input);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試 key 名含特殊字元（hyphen、underscore、空格）— 確認現時無 escape
+     */
+    public function testSpecialCharactersInKeyNames(): void
+    {
+        $input = [
+            'user-id' => true,
+            '_internal' => true,
+            'first name' => true,
+            'normal' => true
+        ];
+
+        $expected = 'user-id _internal first name normal';
+        $result = array_to_gql($input);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * 測試 __aliasFor + __args 但無 selection fields（純 mutation）
+     */
+    public function testAliasWithArgumentsButNoFields(): void
+    {
+        $input = [
+            'del' => [
+                '__aliasFor' => 'deleteUser',
+                '__args' => [
+                    'id' => 1
+                ]
+            ]
+        ];
+
+        $expected = 'del: deleteUser(id: 1)';
+        $result = array_to_gql($input);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * 測試各種數據類型的正確處理
      */
     public function testVariousDataTypes(): void
